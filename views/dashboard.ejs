@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <title>Dashboard — Tree</title>
+  <%- include('partials/head') %>
+</head>
+<body class="bg-dark-950 text-dark-200 min-h-screen">
+
+  <div class="flex min-h-screen">
+
+    <!-- ─── Sidebar ─── -->
+    <aside class="w-64 bg-dark-900/50 border-r border-dark-800 flex flex-col fixed h-full z-20">
+      <!-- Logo -->
+      <div class="p-6 border-b border-dark-800">
+        <a href="/dashboard" class="flex items-center gap-3">
+          <img src="/tree.png" alt="Tree" class="w-9 h-9 object-contain">
+          <span class="text-lg font-bold bg-gradient-to-r from-tree-400 to-tree-300 bg-clip-text text-transparent">Tree</span>
+        </a>
+      </div>
+
+      <!-- Nav -->
+      <nav class="flex-1 p-4 space-y-1">
+        <a href="/dashboard" class="flex items-center gap-3 px-4 py-2.5 rounded-xl <%= page === 'overview' ? 'bg-tree-500/10 text-tree-400' : 'text-dark-400 hover:text-dark-200 hover:bg-dark-800/50' %> transition-colors">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z"/></svg>
+          Overview
+        </a>
+        <a href="/dashboard/edit" class="flex items-center gap-3 px-4 py-2.5 rounded-xl <%= page === 'edit' ? 'bg-tree-500/10 text-tree-400' : 'text-dark-400 hover:text-dark-200 hover:bg-dark-800/50' %> transition-colors">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"/></svg>
+          Edit Profile
+        </a>
+        <a href="/dashboard/settings" class="flex items-center gap-3 px-4 py-2.5 rounded-xl <%= page === 'settings' ? 'bg-tree-500/10 text-tree-400' : 'text-dark-400 hover:text-dark-200 hover:bg-dark-800/50' %> transition-colors">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.324.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 011.37.49l1.296 2.247a1.125 1.125 0 01-.26 1.431l-1.003.827c-.293.24-.438.613-.431.992a6.759 6.759 0 010 .255c-.007.378.138.75.43.99l1.005.828c.424.35.534.954.26 1.43l-1.298 2.247a1.125 1.125 0 01-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.57 6.57 0 01-.22.128c-.331.183-.581.495-.644.869l-.213 1.28c-.09.543-.56.941-1.11.941h-2.594c-.55 0-1.02-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 01-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 01-1.369-.49l-1.297-2.247a1.125 1.125 0 01.26-1.431l1.004-.827c.292-.24.437-.613.43-.992a6.932 6.932 0 010-.255c.007-.378-.138-.75-.43-.99l-1.004-.828a1.125 1.125 0 01-.26-1.43l1.297-2.247a1.125 1.125 0 011.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.087.22-.128.332-.183.582-.495.644-.869l.214-1.281z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+          Settings
+        </a>
+
+        <% if (currentUser && currentUser.isAdmin) { %>
+          <div class="pt-4 mt-4 border-t border-dark-800">
+            <p class="px-4 text-xs font-semibold text-dark-600 uppercase tracking-wider mb-2">Admin</p>
+            <a href="/admin" class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-dark-400 hover:text-dark-200 hover:bg-dark-800/50 transition-colors">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 6h9.75M10.5 6a1.5 1.5 0 11-3 0m3 0a1.5 1.5 0 10-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-9.75 0h9.75"/></svg>
+              Admin Panel
+            </a>
+          </div>
+        <% } %>
+      </nav>
+
+      <!-- User Card -->
+      <div class="p-4 border-t border-dark-800">
+        <div class="flex items-center gap-3 px-2">
+          <img src="<%= user.getAvatarURL(64) %>" alt="avatar" class="w-9 h-9 rounded-full ring-2 ring-dark-700">
+          <div class="flex-1 min-w-0">
+            <p class="text-sm font-medium text-dark-200 truncate"><%= user.fullName %></p>
+            <p class="text-xs text-dark-500 truncate">@<%= user.username %></p>
+          </div>
+          <a href="/auth/logout" class="text-dark-500 hover:text-red-400 transition-colors" title="Logout">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9"/></svg>
+          </a>
+        </div>
+      </div>
+    </aside>
+
+    <!-- ─── Main Content ─── -->
+    <main class="flex-1 ml-64 p-8">
+
+      <!-- Flash Messages -->
+      <% if (success && success.length > 0) { %>
+        <div class="mb-6 px-4 py-3 bg-tree-500/10 border border-tree-500/20 rounded-xl text-tree-400 text-sm flex items-center gap-2">
+          <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          <%= success %>
+        </div>
+      <% } %>
+      <% if (error && error.length > 0) { %>
+        <div class="mb-6 px-4 py-3 bg-red-500/10 border border-red-500/20 rounded-xl text-red-400 text-sm">
+          <%= error %>
+        </div>
+      <% } %>
+
+      <!-- Header -->
+      <div class="mb-8">
+        <h1 class="text-2xl font-bold text-dark-100">Welcome back, <span class="text-tree-400"><%= user.fullName.split(' ')[0] %></span></h1>
+        <p class="text-dark-500 mt-1">Here's your Tree identity overview</p>
+      </div>
+
+      <!-- Profile Card -->
+      <div class="glass rounded-2xl p-8 mb-8 glow-sm">
+        <div class="flex items-start gap-6">
+          <img src="<%= user.getAvatarURL(128) %>" alt="avatar" class="w-24 h-24 rounded-2xl ring-4 ring-tree-500/20">
+          <div class="flex-1">
+            <h2 class="text-2xl font-bold text-dark-100"><%= user.fullName %></h2>
+            <p class="text-dark-400">@<%= user.username %></p>
+            <% if (user.bio) { %>
+              <p class="text-dark-300 mt-3 text-sm leading-relaxed"><%= user.bio %></p>
+            <% } %>
+            <div class="flex items-center gap-4 mt-4 text-sm text-dark-500">
+              <% if (user.location) { %>
+                <span class="flex items-center gap-1">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z"/></svg>
+                  <%= user.location %>
+                </span>
+              <% } %>
+              <% if (user.website) { %>
+                <a href="<%= user.website %>" target="_blank" class="flex items-center gap-1 hover:text-tree-400 transition-colors">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m9.86-2.54a4.5 4.5 0 00-6.364-6.364L4.5 8.738"/></svg>
+                  Website
+                </a>
+              <% } %>
+              <span class="flex items-center gap-1">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5"/></svg>
+                Joined <%= new Date(user.createdAt).toLocaleDateString('en-US', { month: 'short', year: 'numeric' }) %>
+              </span>
+            </div>
+          </div>
+          <a href="/dashboard/edit" class="px-4 py-2 bg-dark-800 hover:bg-dark-700 border border-dark-700 rounded-xl text-sm text-dark-300 transition-colors">
+            Edit Profile
+          </a>
+        </div>
+      </div>
+
+      <!-- Info Cards -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <!-- Role -->
+        <div class="glass rounded-2xl p-6">
+          <div class="flex items-center gap-3 mb-3">
+            <div class="w-10 h-10 rounded-xl bg-purple-500/10 flex items-center justify-center">
+              <% if (user.role === 'engineering') { %>
+                <svg class="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18.75"/></svg>
+              <% } else if (user.role === 'coding') { %>
+                <svg class="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M14.25 9.75L16.5 12l-2.25 2.25m-4.5 0L7.5 12l2.25-2.25M6 20.25h12A2.25 2.25 0 0020.25 18V6A2.25 2.25 0 0018 3.75H6A2.25 2.25 0 003.75 6v12A2.25 2.25 0 006 20.25z"/></svg>
+              <% } else if (user.role === 'arts') { %>
+                <svg class="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9.53 16.122a3 3 0 00-5.78 1.128A2.25 2.25 0 002.808 19.5H15a2.25 2.25 0 002.25-2.25M15 12a3 3 0 11-6 0 3 3 0 016 0zm6-3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z"/></svg>
+              <% } else if (user.role === 'literature') { %>
+                <svg class="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3.042.526m15.084 6.094c.744.464 1.44.994 2.052 1.571m0 0A8.966 8.966 0 0121 12a8.966 8.966 0 01-2.042 5.708m0 0c-.569.569-1.169 1.079-1.786 1.531M9 20.25H7.5a2.25 2.25 0 01-2.25-2.25V9m9-3h1.5A2.25 2.25 0 0121 7.5v11.25m-9-3h8.26a2.25 2.25 0 012.04 1.295l.5 1M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+              <% } else { %>
+                <svg class="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"/></svg>
+              <% } %>
+            </div>
+            <div>
+              <p class="text-xs text-dark-500 uppercase tracking-wide">Role</p>
+              <p class="text-dark-100 font-semibold capitalize"><%= user.role %></p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Status -->
+        <div class="glass rounded-2xl p-6">
+          <div class="flex items-center gap-3 mb-3">
+            <div class="w-10 h-10 rounded-xl bg-tree-500/10 flex items-center justify-center">
+              <div class="w-3 h-3 rounded-full bg-tree-400 animate-pulse"></div>
+            </div>
+            <div>
+              <p class="text-xs text-dark-500 uppercase tracking-wide">Status</p>
+              <p class="text-tree-400 font-semibold capitalize"><%= user.status %></p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Discord -->
+        <div class="glass rounded-2xl p-6">
+          <div class="flex items-center gap-3 mb-3">
+            <div class="w-10 h-10 rounded-xl bg-[#5865F2]/10 flex items-center justify-center">
+              <svg class="w-5 h-5 text-[#5865F2]" viewBox="0 0 24 24" fill="currentColor"><path d="M20.317 4.37a19.791 19.791 0 00-4.885-1.515.074.074 0 00-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 00-5.487 0 12.64 12.64 0 00-.617-1.25.077.077 0 00-.079-.037A19.736 19.736 0 003.677 4.37a.07.07 0 00-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 00.031.057 19.9 19.9 0 005.993 3.03.078.078 0 00.084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 00-.041-.106 13.107 13.107 0 01-1.872-.892.077.077 0 01-.008-.128 10.2 10.2 0 00.372-.292.074.074 0 01.077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 01.078.01c.12.098.246.198.373.292a.077.077 0 01-.006.127 12.299 12.299 0 01-1.873.892.077.077 0 00-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 00.084.028 19.839 19.839 0 006.002-3.03.077.077 0 00.032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 00-.031-.03z"/></svg>
+            </div>
+            <div>
+              <p class="text-xs text-dark-500 uppercase tracking-wide">Discord</p>
+              <p class="text-dark-100 font-semibold"><%= user.discordUsername %></p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- API Key Section -->
+      <div class="glass rounded-2xl p-8 mb-8">
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <h3 class="text-lg font-semibold text-dark-100">API Key</h3>
+            <p class="text-sm text-dark-500">Use this key to authenticate with connected services (Wakatime, etc.)</p>
+          </div>
+          <a href="/dashboard/settings" class="text-sm text-tree-500 hover:text-tree-400 transition-colors">Manage →</a>
+        </div>
+        <div class="flex items-center gap-3">
+          <code class="flex-1 px-4 py-3 bg-dark-950 rounded-xl text-sm font-mono text-dark-300 border border-dark-800 select-all" id="apiKey"><%= user.apiKey %></code>
+          <button onclick="copyApiKey()" class="px-4 py-3 bg-dark-800 hover:bg-dark-700 border border-dark-700 rounded-xl text-sm text-dark-300 transition-colors" id="copyBtn">
+            Copy
+          </button>
+        </div>
+        <p class="text-xs text-dark-600 mt-2 flex items-center gap-1">
+          <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
+          Keep this secret. Never share publicly.
+        </p>
+      </div>
+
+      <!-- Quick Info -->
+      <div class="glass rounded-2xl p-8">
+        <h3 class="text-lg font-semibold text-dark-100 mb-4">Account Details</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+          <div class="flex justify-between py-2 border-b border-dark-800">
+            <span class="text-dark-500">Email</span>
+            <span class="text-dark-300"><%= user.email %></span>
+          </div>
+          <div class="flex justify-between py-2 border-b border-dark-800">
+            <span class="text-dark-500">User ID</span>
+            <span class="text-dark-300 font-mono text-xs"><%= user._id %></span>
+          </div>
+          <div class="flex justify-between py-2 border-b border-dark-800">
+            <span class="text-dark-500">Discord ID</span>
+            <span class="text-dark-300 font-mono text-xs"><%= user.discordId %></span>
+          </div>
+          <div class="flex justify-between py-2 border-b border-dark-800">
+            <span class="text-dark-500">Timezone</span>
+            <span class="text-dark-300"><%= user.timezone %></span>
+          </div>
+          <div class="flex justify-between py-2 border-b border-dark-800">
+            <span class="text-dark-500">Last Login</span>
+            <span class="text-dark-300"><%= user.lastLogin ? new Date(user.lastLogin).toLocaleString() : 'N/A' %></span>
+          </div>
+          <div class="flex justify-between py-2 border-b border-dark-800">
+            <span class="text-dark-500">Tags</span>
+            <span class="text-dark-300"><%= user.tags.length > 0 ? user.tags.join(', ') : 'None' %></span>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    function copyApiKey() {
+      const key = document.getElementById('apiKey').textContent;
+      navigator.clipboard.writeText(key).then(() => {
+        const btn = document.getElementById('copyBtn');
+        btn.textContent = 'Copied!';
+        btn.classList.add('text-tree-400');
+        setTimeout(() => {
+          btn.textContent = 'Copy';
+          btn.classList.remove('text-tree-400');
+        }, 2000);
+      });
+    }
+  </script>
+</body>
+</html>

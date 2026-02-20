@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <title>Account Banned — Tree</title>
+  <%- include('partials/head') %>
+</head>
+<body class="bg-dark-950 text-dark-200 min-h-screen flex items-center justify-center">
+  <div class="fixed inset-0 overflow-hidden pointer-events-none">
+    <div class="absolute top-1/3 left-1/2 w-96 h-96 bg-red-500/5 rounded-full blur-3xl -translate-x-1/2"></div>
+  </div>
+
+  <div class="relative z-10 text-center max-w-md px-6">
+    <div class="w-24 h-24 rounded-3xl bg-red-500/10 border border-red-500/20 flex items-center justify-center mx-auto mb-6">
+      <svg class="w-12 h-12 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"/>
+      </svg>
+    </div>
+
+    <h1 class="text-3xl font-bold text-dark-100 mb-2">Account Suspended</h1>
+    <p class="text-dark-400 mb-6">Your Tree account has been banned from accessing services.</p>
+
+    <% if (user && user.banReason) { %>
+      <div class="p-4 bg-red-500/5 border border-red-500/20 rounded-xl mb-6 text-left">
+        <p class="text-sm text-dark-500 mb-1">Reason:</p>
+        <p class="text-sm text-red-400"><%= user.banReason %></p>
+        <% if (user.bannedAt) { %>
+          <p class="text-xs text-dark-600 mt-2">Since <%= new Date(user.bannedAt).toLocaleDateString() %></p>
+        <% } %>
+      </div>
+    <% } %>
+
+    <p class="text-sm text-dark-500 mb-6">
+      If you believe this is a mistake, please contact an administrator.
+    </p>
+
+    <a href="/auth/logout" class="inline-flex items-center gap-2 px-6 py-3 bg-dark-800 hover:bg-dark-700 border border-dark-700 rounded-xl text-dark-300 transition-colors">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9"/></svg>
+      Sign Out
+    </a>
+  </div>
+</body>
+</html>

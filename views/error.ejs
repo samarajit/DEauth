@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <title><%= title %> — Tree</title>
+  <%- include('partials/head') %>
+</head>
+<body class="bg-dark-950 text-dark-200 min-h-screen flex items-center justify-center">
+  <div class="text-center max-w-md px-6">
+    <div class="w-20 h-20 rounded-2xl bg-dark-800 flex items-center justify-center mx-auto mb-6 border border-dark-700">
+      <span class="text-4xl font-bold text-dark-500"><%= title %></span>
+    </div>
+    <h1 class="text-2xl font-bold text-dark-100 mb-2"><%= message %></h1>
+    <p class="text-dark-400 mb-8"><%= description %></p>
+    <a href="/" class="inline-flex items-center gap-2 px-6 py-3 bg-tree-600 hover:bg-tree-700 text-white rounded-xl font-medium transition-colors">
+      ← Go Home
+    </a>
+  </div>
+</body>
+</html>

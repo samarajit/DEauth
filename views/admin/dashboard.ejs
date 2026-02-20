@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <title>Admin Dashboard — Tree</title>
+  <%- include('../partials/head') %>
+</head>
+<body class="bg-dark-950 text-dark-200 min-h-screen">
+  <div class="flex min-h-screen">
+
+    <!-- Admin Sidebar -->
+    <aside class="w-64 bg-dark-900/50 border-r border-dark-800 flex flex-col fixed h-full z-20">
+      <div class="p-6 border-b border-dark-800">
+        <a href="/admin" class="flex items-center gap-3">
+          <img src="/tree.png" alt="Tree" class="w-9 h-9 object-contain">
+          <div>
+            <span class="text-lg font-bold bg-gradient-to-r from-amber-400 to-amber-300 bg-clip-text text-transparent">Tree</span>
+            <span class="text-xs text-dark-500 block -mt-1">Admin Panel</span>
+          </div>
+        </a>
+      </div>
+      <nav class="flex-1 p-4 space-y-1">
+        <a href="/admin" class="flex items-center gap-3 px-4 py-2.5 rounded-xl <%= page === 'admin-overview' ? 'bg-amber-500/10 text-amber-400' : 'text-dark-400 hover:text-dark-200 hover:bg-dark-800/50' %> transition-colors">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z"/></svg>
+          Overview
+        </a>
+        <a href="/admin/users" class="flex items-center gap-3 px-4 py-2.5 rounded-xl <%= page === 'admin-users' ? 'bg-amber-500/10 text-amber-400' : 'text-dark-400 hover:text-dark-200 hover:bg-dark-800/50' %> transition-colors">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z"/></svg>
+          Users
+        </a>
+        <div class="pt-4 mt-4 border-t border-dark-800">
+          <a href="/dashboard" class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-dark-400 hover:text-dark-200 hover:bg-dark-800/50 transition-colors">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 15L3 9m0 0l6-6M3 9h12a6 6 0 010 12h-3"/></svg>
+            Back to Dashboard
+          </a>
+        </div>
+      </nav>
+      <div class="p-4 border-t border-dark-800">
+        <div class="flex items-center gap-3 px-2">
+          <img src="<%= currentUser.getAvatarURL(64) %>" alt="" class="w-9 h-9 rounded-full ring-2 ring-amber-500/30">
+          <div class="flex-1 min-w-0"><p class="text-sm font-medium text-dark-200 truncate"><%= currentUser.fullName %></p><p class="text-xs text-amber-400">Admin</p></div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main -->
+    <main class="flex-1 ml-64 p-8">
+      <div class="mb-8">
+        <h1 class="text-2xl font-bold text-dark-100">Admin Overview</h1>
+        <p class="text-dark-500 mt-1">System statistics and user management</p>
+      </div>
+
+      <!-- Stats Grid -->
+      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
+        <div class="glass rounded-2xl p-5">
+          <p class="text-3xl font-bold text-dark-100"><%= stats.totalUsers %></p>
+          <p class="text-sm text-dark-500 mt-1">Total Users</p>
+        </div>
+        <div class="glass rounded-2xl p-5">
+          <p class="text-3xl font-bold text-tree-400"><%= stats.activeUsers %></p>
+          <p class="text-sm text-dark-500 mt-1">Active</p>
+        </div>
+        <div class="glass rounded-2xl p-5">
+          <p class="text-3xl font-bold text-red-400"><%= stats.bannedUsers %></p>
+          <p class="text-sm text-dark-500 mt-1">Banned</p>
+        </div>
+        <div class="glass rounded-2xl p-5">
+          <p class="text-3xl font-bold text-blue-400"><%= stats.verifiedUsers %></p>
+          <p class="text-sm text-dark-500 mt-1">Verified</p>
+        </div>
+        <div class="glass rounded-2xl p-5">
+          <p class="text-3xl font-bold text-amber-400"><%= stats.blacklistedUsers %></p>
+          <p class="text-sm text-dark-500 mt-1">Blacklisted</p>
+        </div>
+        <div class="glass rounded-2xl p-5">
+          <p class="text-3xl font-bold text-emerald-400"><%= stats.whitelistedUsers %></p>
+          <p class="text-sm text-dark-500 mt-1">Whitelisted</p>
+        </div>
+      </div>
+
+      <!-- Roles Breakdown -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+        <div class="glass rounded-2xl p-6">
+          <h3 class="text-lg font-semibold text-dark-100 mb-4">Roles Distribution</h3>
+          <div class="space-y-3">
+            <% const roleIcons = { engineering: '⚙', coding: '</>', arts: '🎨', literature: '📖', other: '👤' }; %>
+            <% const roleColors = { engineering: 'bg-orange-500', coding: 'bg-blue-500', arts: 'bg-pink-500', literature: 'bg-purple-500', other: 'bg-gray-500' }; %>
+            <% ['engineering', 'coding', 'arts', 'literature', 'other'].forEach(role => { %>
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <span><%= roleIcons[role] %></span>
+                  <span class="text-dark-300 capitalize"><%= role %></span>
+                </div>
+                <div class="flex items-center gap-3">
+                  <div class="w-32 h-2 bg-dark-800 rounded-full overflow-hidden">
+                    <div class="h-full <%= roleColors[role] %> rounded-full" style="width: <%= stats.totalUsers > 0 ? ((stats.roles[role] || 0) / stats.totalUsers * 100) : 0 %>%"></div>
+                  </div>
+                  <span class="text-sm text-dark-400 w-8 text-right"><%= stats.roles[role] || 0 %></span>
+                </div>
+              </div>
+            <% }); %>
+          </div>
+        </div>
+
+        <!-- Recent Users -->
+        <div class="glass rounded-2xl p-6">
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="text-lg font-semibold text-dark-100">Recent Users</h3>
+            <a href="/admin/users" class="text-sm text-amber-400 hover:text-amber-300 transition-colors">View all →</a>
+          </div>
+          <div class="space-y-3">
+            <% recentUsers.slice(0, 6).forEach(u => { %>
+              <a href="/admin/users/<%= u._id %>" class="flex items-center gap-3 p-2 rounded-xl hover:bg-dark-800/50 transition-colors">
+                <img src="<%= u.getAvatarURL(48) %>" alt="" class="w-8 h-8 rounded-full">
+                <div class="flex-1 min-w-0">
+                  <p class="text-sm text-dark-200 truncate"><%= u.fullName || u.discordUsername %></p>
+                  <p class="text-xs text-dark-500">@<%= u.username || u.discordId %></p>
+                </div>
+                <% if (u.status === 'banned') { %>
+                  <span class="px-2 py-0.5 bg-red-500/10 text-red-400 rounded-full text-xs">Banned</span>
+                <% } else if (u.hasTag('verified')) { %>
+                  <span class="px-2 py-0.5 bg-blue-500/10 text-blue-400 rounded-full text-xs">Verified</span>
+                <% } %>
+              </a>
+            <% }); %>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</body>
+</html>
