@@ -1,7 +1,7 @@
 {
-  "name": "tree-auth",
+  "name": "deauth",
   "version": "1.0.0",
-  "description": "Tree — Authentication & User Management System",
+  "description": "DEauth — Authentication & User Management System",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
@@ -11,19 +11,22 @@
     "docker:down": "docker-compose down"
   },
   "dependencies": {
+    "@prisma/adapter-pg": "^7.6.0",
+    "@prisma/client": "^7.6.0",
     "bcryptjs": "^2.4.3",
     "connect-flash": "^0.1.1",
-    "connect-mongo": "^5.1.0",
+    "connect-pg-simple": "^10.0.0",
     "dotenv": "^16.4.5",
     "ejs": "^3.1.10",
     "express": "^4.21.0",
-    "express-session": "^1.18.0",
-    "mongoose": "^8.7.0",
+    "express-session": "^1.19.0",
     "passport": "^0.7.0",
     "passport-discord": "^0.1.4",
+    "pg": "^8.20.0",
     "uuid": "^10.0.0"
   },
   "devDependencies": {
-    "nodemon": "^3.1.0"
+    "nodemon": "^3.1.0",
+    "prisma": "^7.6.0"
   }
 }

@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const User = require('../models/User');
+const { prisma, UserUtils } = require('../models/User');
 const { isFullyAuthed } = require('../middleware/auth');
 
 // ─── User Dashboard ───
@@ -24,8 +24,13 @@ router.post('/edit', isFullyAuthed, async (req, res) => {
     const { currentPassword, fullName, bio, website, location, role, timezone, newEmail, newUsername } = req.body;
 
     // Verify current password
-    const user = await User.findById(req.user._id);
-    const isMatch = await user.comparePassword(currentPassword);
+    const user = await prisma.user.findUnique({ where: { id: req.user.id } });
+    if (!user) {
+      req.flash('error', 'User not found.');
+      return res.redirect('/auth/logout');
+    }
+
+    const isMatch = await UserUtils.comparePassword(user, currentPassword);
     if (!isMatch) {
       req.flash('error', 'Current password is incorrect.');
       return res.redirect('/dashboard/edit');
@@ -41,9 +46,11 @@ router.post('/edit', isFullyAuthed, async (req, res) => {
       if (!/^[a-zA-Z0-9_-]+$/.test(newUsername)) {
         errors.push('Username can only contain letters, numbers, underscores, and hyphens.');
       }
-      const existingUser = await User.findOne({
-        username: newUsername.toLowerCase(),
-        _id: { $ne: user._id }
+      const existingUser = await prisma.user.findFirst({
+        where: {
+          username: newUsername.toLowerCase(),
+          id: { not: user.id }
+        }
       });
       if (existingUser) {
         errors.push('Username is already taken.');
@@ -58,9 +65,11 @@ router.post('/edit', isFullyAuthed, async (req, res) => {
       if (!/^\S+@\S+\.\S+$/.test(newEmail)) {
         errors.push('Valid email is required.');
       }
-      const existingEmail = await User.findOne({
-        email: newEmail.toLowerCase(),
-        _id: { $ne: user._id }
+      const existingEmail = await prisma.user.findFirst({
+        where: {
+          email: newEmail.toLowerCase(),
+          id: { not: user.id }
+        }
       });
       if (existingEmail) {
         errors.push('Email is already in use.');
@@ -76,14 +85,19 @@ router.post('/edit', isFullyAuthed, async (req, res) => {
     }
 
     // Update fields
-    user.fullName = fullName ? fullName.trim() : user.fullName;
-    user.bio = bio !== undefined ? bio.trim() : user.bio;
-    user.website = website !== undefined ? website.trim() : user.website;
-    user.location = location !== undefined ? location.trim() : user.location;
-    user.role = role || user.role;
-    user.timezone = timezone || user.timezone;
-
-    await user.save();
+    await prisma.user.update({
+      where: { id: user.id },
+      data: {
+        fullName: fullName ? fullName.trim() : user.fullName,
+        bio: bio !== undefined ? bio.trim() : user.bio,
+        website: website !== undefined ? website.trim() : user.website,
+        location: location !== undefined ? location.trim() : user.location,
+        role: role || user.role,
+        timezone: timezone || user.timezone,
+        username: user.username,
+        email: user.email
+      }
+    });
 
     req.flash('success', 'Profile updated successfully.');
     res.redirect('/dashboard');
@@ -99,8 +113,13 @@ router.post('/change-password', isFullyAuthed, async (req, res) => {
   try {
     const { currentPassword, newPassword, confirmNewPassword } = req.body;
 
-    const user = await User.findById(req.user._id);
-    const isMatch = await user.comparePassword(currentPassword);
+    const user = await prisma.user.findUnique({ where: { id: req.user.id } });
+    if (!user) {
+      req.flash('error', 'User not found.');
+      return res.redirect('/auth/logout');
+    }
+
+    const isMatch = await UserUtils.comparePassword(user, currentPassword);
     if (!isMatch) {
       req.flash('error', 'Current password is incorrect.');
       return res.redirect('/dashboard/settings');
@@ -116,8 +135,10 @@ router.post('/change-password', isFullyAuthed, async (req, res) => {
       return res.redirect('/dashboard/settings');
     }
 
-    user.password = newPassword;
-    await user.save();
+    await prisma.user.update({
+      where: { id: user.id },
+      data: { password: await UserUtils.hashPassword(newPassword) }
+    });
 
     req.flash('success', 'Password changed successfully.');
     res.redirect('/dashboard/settings');
@@ -141,15 +162,22 @@ router.post('/regenerate-api-key', isFullyAuthed, async (req, res) => {
   try {
     const { currentPassword } = req.body;
 
-    const user = await User.findById(req.user._id);
-    const isMatch = await user.comparePassword(currentPassword);
+    const user = await prisma.user.findUnique({ where: { id: req.user.id } });
+    if (!user) {
+      req.flash('error', 'User not found.');
+      return res.redirect('/auth/logout');
+    }
+
+    const isMatch = await UserUtils.comparePassword(user, currentPassword);
     if (!isMatch) {
       req.flash('error', 'Password is incorrect.');
       return res.redirect('/dashboard/settings');
     }
 
-    user.generateApiKey();
-    await user.save();
+    await prisma.user.update({
+      where: { id: user.id },
+      data: { apiKey: UserUtils.generateApiKey() }
+    });
 
     req.flash('success', 'API key regenerated. Update your connected services.');
     res.redirect('/dashboard/settings');

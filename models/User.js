@@ -1,173 +1,117 @@
-const mongoose = require('mongoose');
+const { PrismaClient } = require('@prisma/client');
+const { Pool } = require('pg');
+const { PrismaPg } = require('@prisma/adapter-pg');
 const bcrypt = require('bcryptjs');
 const { v4: uuidv4 } = require('uuid');
 
-const UserSchema = new mongoose.Schema({
-  // ─── Discord OAuth Data ───
-  discordId: {
-    type: String,
-    required: true,
-    unique: true,
-    index: true
-  },
-  discordUsername: { type: String },
-  discordGlobalName: { type: String },
-  discordAvatar: { type: String },
-  discordEmail: { type: String },
+const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+const adapter = new PrismaPg(pool);
+const prisma = new PrismaClient({ adapter });
 
-  // ─── Profile Data (user fills via form) ───
-  username: {
-    type: String,
-    unique: true,
-    sparse: true,
-    trim: true,
-    minlength: 3,
-    maxlength: 30
-  },
-  email: {
-    type: String,
-    unique: true,
-    sparse: true,
-    trim: true,
-    lowercase: true
-  },
-  password: { type: String },
-  fullName: { type: String, trim: true, maxlength: 100 },
-  bio: { type: String, maxlength: 500 },
-  website: { type: String, trim: true },
-  location: { type: String, trim: true, maxlength: 100 },
-  timezone: { type: String, default: 'UTC' },
-
-  // ─── Role ───
-  role: {
-    type: String,
-    enum: ['engineering', 'coding', 'arts', 'literature', 'other'],
-    default: 'other'
-  },
-
-  // ─── Tags (multiple allowed) ───
-  tags: [{
-    type: String,
-    enum: ['verified', 'blacklisted', 'whitelisted']
-  }],
-
-  // ─── Status ───
-  status: {
-    type: String,
-    enum: ['active', 'banned', 'suspended'],
-    default: 'active'
-  },
-  banReason: { type: String },
-  bannedAt: { type: Date },
-  bannedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-
-  // ─── Admin ───
-  isAdmin: { type: Boolean, default: false },
-
-  // ─── API Key (for Wakatime / external service integration) ───
-  apiKey: {
-    type: String,
-    unique: true,
-    sparse: true,
-    index: true
-  },
-
-  // ─── Profile Completion ───
-  profileCompleted: { type: Boolean, default: false },
-
-  // ─── Timestamps ───
-  lastLogin: { type: Date },
-  createdAt: { type: Date, default: Date.now },
-  updatedAt: { type: Date, default: Date.now }
-});
-
-// Hash password before save
-UserSchema.pre('save', async function (next) {
-  this.updatedAt = Date.now();
-
-  if (!this.isModified('password') || !this.password) return next();
-
-  try {
+const UserUtils = {
+  // Method to hash password
+  hashPassword: async (password) => {
+    if (!password) return null;
     const salt = await bcrypt.genSalt(12);
-    this.password = await bcrypt.hash(this.password, salt);
-    next();
-  } catch (err) {
-    next(err);
+    return bcrypt.hash(password, salt);
+  },
+
+  // Method to compare password
+  comparePassword: async (user, candidatePassword) => {
+    if (!user.password) return false;
+    return bcrypt.compare(candidatePassword, user.password);
+  },
+
+  // Method to generate API key
+  generateApiKey: () => {
+    return `deauth_${uuidv4().replace(/-/g, '')}`;
+  },
+
+  // Method to get avatar URL
+  getAvatarURL: (user, size = 128) => {
+    if (user.discordAvatar && user.discordId) {
+      return `https://cdn.discordapp.com/avatars/${user.discordId}/${user.discordAvatar}.png?size=${size}`;
+    }
+    const defaultAvatar = parseInt(user.discordId || '0') % 5;
+    return `https://cdn.discordapp.com/embed/avatars/${defaultAvatar}.png?size=${size}`;
+  },
+
+  // Check if user has a specific tag
+  hasTag: (user, tag) => {
+    return user.tags && user.tags.includes(tag);
+  },
+
+  // Check if user is banned
+  isBanned: (user) => {
+    return user.status === 'banned';
+  },
+
+  // Check if user is blacklisted
+  isBlacklisted: (user) => {
+    return UserUtils.hasTag(user, 'blacklisted');
+  },
+
+  // Check if user can access API services
+  canAccessServices: (user) => {
+    return user.status === 'active' && !UserUtils.hasTag(user, 'blacklisted');
+  },
+
+  // Format user for safe public JSON response
+  toPublicJSON: (user) => {
+    return {
+      id: user.id,
+      username: user.username,
+      fullName: user.fullName || user.discordUsername,
+      bio: user.bio,
+      role: user.role,
+      tags: user.tags || [],
+      status: user.status,
+      avatar: UserUtils.getAvatarURL(user),
+      website: user.website,
+      location: user.location,
+      createdAt: user.createdAt
+    };
+  },
+
+  // Format user for safe service JSON response
+  toServiceJSON: (user) => {
+    return {
+      id: user.id,
+      username: user.username,
+      email: user.email,
+      fullName: user.fullName || user.discordUsername,
+      role: user.role,
+      tags: user.tags || [],
+      status: user.status,
+      canAccess: UserUtils.canAccessServices(user),
+      avatar: UserUtils.getAvatarURL(user),
+      createdAt: user.createdAt
+    };
+  },
+
+  // Helper to attach methods to standard prisma objects easily in templates and existing routes
+  attachMethods: (user) => {
+    if (!user) return null;
+    return {
+      ...user,
+      _id: user.id, // For backwards compatibility with existing templates/routes looking for _id
+      comparePassword: (pwd) => UserUtils.comparePassword(user, pwd),
+      generateApiKey: () => UserUtils.generateApiKey(), // Note: caller must still save the key to DB
+      getAvatarURL: (size) => UserUtils.getAvatarURL(user, size),
+      hasTag: (tag) => UserUtils.hasTag(user, tag),
+      isBanned: () => UserUtils.isBanned(user),
+      isBlacklisted: () => UserUtils.isBlacklisted(user),
+      canAccessServices: () => UserUtils.canAccessServices(user),
+      toPublicJSON: () => UserUtils.toPublicJSON(user),
+      toServiceJSON: () => UserUtils.toServiceJSON(user)
+    };
+  },
+  
+  attachMethodsArray: (users) => {
+      if(!users) return [];
+      return users.map(user => UserUtils.attachMethods(user));
   }
-});
-
-// Compare password
-UserSchema.methods.comparePassword = async function (candidatePassword) {
-  if (!this.password) return false;
-  return bcrypt.compare(candidatePassword, this.password);
 };
 
-// Generate API key
-UserSchema.methods.generateApiKey = function () {
-  this.apiKey = `tree_${uuidv4().replace(/-/g, '')}`;
-  return this.apiKey;
-};
-
-// Get avatar URL
-UserSchema.methods.getAvatarURL = function (size = 128) {
-  if (this.discordAvatar) {
-    return `https://cdn.discordapp.com/avatars/${this.discordId}/${this.discordAvatar}.png?size=${size}`;
-  }
-  const defaultAvatar = parseInt(this.discordId) % 5;
-  return `https://cdn.discordapp.com/embed/avatars/${defaultAvatar}.png?size=${size}`;
-};
-
-// Check tag
-UserSchema.methods.hasTag = function (tag) {
-  return this.tags.includes(tag);
-};
-
-// Check if banned
-UserSchema.methods.isBanned = function () {
-  return this.status === 'banned';
-};
-
-// Check if blacklisted
-UserSchema.methods.isBlacklisted = function () {
-  return this.tags.includes('blacklisted');
-};
-
-// Check if user can access services
-UserSchema.methods.canAccessServices = function () {
-  return this.status === 'active' && !this.tags.includes('blacklisted');
-};
-
-// Public profile (safe to expose)
-UserSchema.methods.toPublicJSON = function () {
-  return {
-    id: this._id,
-    username: this.username,
-    fullName: this.fullName,
-    bio: this.bio,
-    role: this.role,
-    tags: this.tags,
-    status: this.status,
-    avatar: this.getAvatarURL(),
-    website: this.website,
-    location: this.location,
-    createdAt: this.createdAt
-  };
-};
-
-// Service auth response (for Wakatime etc.)
-UserSchema.methods.toServiceJSON = function () {
-  return {
-    id: this._id,
-    username: this.username,
-    email: this.email,
-    fullName: this.fullName,
-    role: this.role,
-    tags: this.tags,
-    status: this.status,
-    canAccess: this.canAccessServices(),
-    avatar: this.getAvatarURL(),
-    createdAt: this.createdAt
-  };
-};
-
-module.exports = mongoose.model('User', UserSchema);
+// We export the standard utility functions and the raw prisma client
+module.exports = { UserUtils, prisma };

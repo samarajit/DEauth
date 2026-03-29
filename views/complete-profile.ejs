@@ -7,7 +7,7 @@
 <body class="bg-dark-950 text-dark-200 min-h-screen">
 
   <div class="fixed inset-0 overflow-hidden pointer-events-none">
-    <div class="absolute top-1/4 left-1/4 w-96 h-96 bg-tree-500/5 rounded-full blur-3xl"></div>
+    <div class="absolute top-1/4 left-1/4 w-96 h-96 bg-deauth-500/5 rounded-full blur-3xl"></div>
   </div>
 
   <div class="relative z-10 min-h-screen flex items-center justify-center p-6">
@@ -15,13 +15,13 @@
 
       <!-- Header -->
       <div class="text-center mb-8">
-        <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-tree-400 to-tree-600 flex items-center justify-center mx-auto mb-4">
+        <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-deauth-400 to-deauth-600 flex items-center justify-center mx-auto mb-4">
           <svg class="w-9 h-9 text-white" fill="currentColor" viewBox="0 0 24 24">
             <path d="M12 2L8 8h3v4H8l4 6 4-6h-3V8h3L12 2zM7 18h10v2H7v-2z"/>
           </svg>
         </div>
         <h1 class="text-3xl font-bold text-dark-100">Complete Your Profile</h1>
-        <p class="text-dark-400 mt-2">Welcome, <strong class="text-tree-400"><%= user.discordGlobalName || user.discordUsername %></strong>! Set up your Tree identity.</p>
+        <p class="text-dark-400 mt-2">Welcome, <strong class="text-deauth-400"><%= user.discordGlobalName || user.discordUsername %></strong>! Set up your DEauth identity.</p>
       </div>
 
       <!-- Flash Messages -->
@@ -40,7 +40,7 @@
             <label class="block text-sm font-medium text-dark-300 mb-2">Username *</label>
             <input type="text" name="username" required minlength="3" maxlength="30" pattern="[a-zA-Z0-9_-]+"
                    placeholder="john_doe"
-                   class="w-full px-4 py-3 bg-dark-900/80 border border-dark-700 rounded-xl text-dark-100 placeholder-dark-500 focus:outline-none focus:border-tree-500 focus:ring-1 focus:ring-tree-500 transition-colors">
+                   class="w-full px-4 py-3 bg-dark-900/80 border border-dark-700 rounded-xl text-dark-100 placeholder-dark-500 focus:outline-none focus:border-deauth-500 focus:ring-1 focus:ring-deauth-500 transition-colors">
             <p class="text-xs text-dark-500 mt-1">Letters, numbers, underscores, hyphens</p>
           </div>
 
@@ -50,7 +50,7 @@
             <input type="email" name="email" required
                    value="<%= user.discordEmail || '' %>"
                    placeholder="john@example.com"
-                   class="w-full px-4 py-3 bg-dark-900/80 border border-dark-700 rounded-xl text-dark-100 placeholder-dark-500 focus:outline-none focus:border-tree-500 focus:ring-1 focus:ring-tree-500 transition-colors">
+                   class="w-full px-4 py-3 bg-dark-900/80 border border-dark-700 rounded-xl text-dark-100 placeholder-dark-500 focus:outline-none focus:border-deauth-500 focus:ring-1 focus:ring-deauth-500 transition-colors">
           </div>
 
           <!-- Full Name -->
@@ -58,7 +58,7 @@
             <label class="block text-sm font-medium text-dark-300 mb-2">Full Name *</label>
             <input type="text" name="fullName" required maxlength="100"
                    placeholder="John Doe"
-                   class="w-full px-4 py-3 bg-dark-900/80 border border-dark-700 rounded-xl text-dark-100 placeholder-dark-500 focus:outline-none focus:border-tree-500 focus:ring-1 focus:ring-tree-500 transition-colors">
+                   class="w-full px-4 py-3 bg-dark-900/80 border border-dark-700 rounded-xl text-dark-100 placeholder-dark-500 focus:outline-none focus:border-deauth-500 focus:ring-1 focus:ring-deauth-500 transition-colors">
           </div>
 
           <!-- Password -->
@@ -66,7 +66,7 @@
             <label class="block text-sm font-medium text-dark-300 mb-2">Password *</label>
             <input type="password" name="password" required minlength="8"
                    placeholder="Min. 8 characters"
-                   class="w-full px-4 py-3 bg-dark-900/80 border border-dark-700 rounded-xl text-dark-100 placeholder-dark-500 focus:outline-none focus:border-tree-500 focus:ring-1 focus:ring-tree-500 transition-colors">
+                   class="w-full px-4 py-3 bg-dark-900/80 border border-dark-700 rounded-xl text-dark-100 placeholder-dark-500 focus:outline-none focus:border-deauth-500 focus:ring-1 focus:ring-deauth-500 transition-colors">
             <p class="text-xs text-dark-500 mt-1">Used for profile edit verification</p>
           </div>
 
@@ -75,7 +75,7 @@
             <label class="block text-sm font-medium text-dark-300 mb-2">Confirm Password *</label>
             <input type="password" name="confirmPassword" required minlength="8"
                    placeholder="Repeat password"
-                   class="w-full px-4 py-3 bg-dark-900/80 border border-dark-700 rounded-xl text-dark-100 placeholder-dark-500 focus:outline-none focus:border-tree-500 focus:ring-1 focus:ring-tree-500 transition-colors">
+                   class="w-full px-4 py-3 bg-dark-900/80 border border-dark-700 rounded-xl text-dark-100 placeholder-dark-500 focus:outline-none focus:border-deauth-500 focus:ring-1 focus:ring-deauth-500 transition-colors">
           </div>
 
           <!-- Bio -->
@@ -83,13 +83,13 @@
             <label class="block text-sm font-medium text-dark-300 mb-2">Bio</label>
             <textarea name="bio" rows="3" maxlength="500"
                       placeholder="Tell us about yourself..."
-                      class="w-full px-4 py-3 bg-dark-900/80 border border-dark-700 rounded-xl text-dark-100 placeholder-dark-500 focus:outline-none focus:border-tree-500 focus:ring-1 focus:ring-tree-500 transition-colors resize-none"></textarea>
+                      class="w-full px-4 py-3 bg-dark-900/80 border border-dark-700 rounded-xl text-dark-100 placeholder-dark-500 focus:outline-none focus:border-deauth-500 focus:ring-1 focus:ring-deauth-500 transition-colors resize-none"></textarea>
           </div>
 
           <!-- Role -->
           <div>
             <label class="block text-sm font-medium text-dark-300 mb-2">Primary Role</label>
-            <select name="role" class="w-full px-4 py-3 bg-dark-900/80 border border-dark-700 rounded-xl text-dark-100 focus:outline-none focus:border-tree-500 focus:ring-1 focus:ring-tree-500 transition-colors">
+            <select name="role" class="w-full px-4 py-3 bg-dark-900/80 border border-dark-700 rounded-xl text-dark-100 focus:outline-none focus:border-deauth-500 focus:ring-1 focus:ring-deauth-500 transition-colors">
               <option value="other">Select a role...</option>
               <option value="engineering">🔧 Engineering</option>
               <option value="coding">💻 Coding</option>
@@ -103,7 +103,7 @@
             <label class="block text-sm font-medium text-dark-300 mb-2">Location</label>
             <input type="text" name="location" maxlength="100"
                    placeholder="City, Country"
-                   class="w-full px-4 py-3 bg-dark-900/80 border border-dark-700 rounded-xl text-dark-100 placeholder-dark-500 focus:outline-none focus:border-tree-500 focus:ring-1 focus:ring-tree-500 transition-colors">
+                   class="w-full px-4 py-3 bg-dark-900/80 border border-dark-700 rounded-xl text-dark-100 placeholder-dark-500 focus:outline-none focus:border-deauth-500 focus:ring-1 focus:ring-deauth-500 transition-colors">
           </div>
 
           <!-- Website -->
@@ -111,13 +111,13 @@
             <label class="block text-sm font-medium text-dark-300 mb-2">Website</label>
             <input type="url" name="website"
                    placeholder="https://yoursite.com"
-                   class="w-full px-4 py-3 bg-dark-900/80 border border-dark-700 rounded-xl text-dark-100 placeholder-dark-500 focus:outline-none focus:border-tree-500 focus:ring-1 focus:ring-tree-500 transition-colors">
+                   class="w-full px-4 py-3 bg-dark-900/80 border border-dark-700 rounded-xl text-dark-100 placeholder-dark-500 focus:outline-none focus:border-deauth-500 focus:ring-1 focus:ring-deauth-500 transition-colors">
           </div>
 
           <!-- Timezone -->
           <div>
             <label class="block text-sm font-medium text-dark-300 mb-2">Timezone</label>
-            <select name="timezone" class="w-full px-4 py-3 bg-dark-900/80 border border-dark-700 rounded-xl text-dark-100 focus:outline-none focus:border-tree-500 focus:ring-1 focus:ring-tree-500 transition-colors">
+            <select name="timezone" class="w-full px-4 py-3 bg-dark-900/80 border border-dark-700 rounded-xl text-dark-100 focus:outline-none focus:border-deauth-500 focus:ring-1 focus:ring-deauth-500 transition-colors">
               <option value="UTC">UTC</option>
               <option value="America/New_York">Eastern Time (US)</option>
               <option value="America/Chicago">Central Time (US)</option>
@@ -134,14 +134,14 @@
         </div>
 
         <button type="submit" 
-                class="mt-8 w-full py-4 bg-gradient-to-r from-tree-500 to-tree-600 hover:from-tree-600 hover:to-tree-700 text-white font-semibold rounded-xl transition-all duration-300 hover:shadow-lg hover:shadow-tree-500/25">
-          Create My Tree Identity
+                class="mt-8 w-full py-4 bg-gradient-to-r from-deauth-500 to-deauth-600 hover:from-deauth-600 hover:to-deauth-700 text-white font-semibold rounded-xl transition-all duration-300 hover:shadow-lg hover:shadow-deauth-500/25">
+          Create My DEauth Identity
         </button>
       </form>
 
       <p class="text-center text-dark-500 text-sm mt-6">
         Connected as <span class="text-dark-300"><%= user.discordUsername %></span> via Discord
-        · <a href="/auth/logout" class="text-tree-500 hover:text-tree-400 transition-colors">Use different account</a>
+        · <a href="/auth/logout" class="text-deauth-500 hover:text-deauth-400 transition-colors">Use different account</a>
       </p>
     </div>
   </div>

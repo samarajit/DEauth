@@ -1,0 +1,44 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id                 String    @id @default(cuid())
+  discordId          String    @unique
+  discordUsername    String
+  discordAvatar      String?
+  discordGlobalName  String?
+  discordEmail       String?
+  
+  username           String    @unique
+  email              String?
+  password           String?   // For local auth or future expansion
+  
+  // Profile
+  fullName           String?
+  bio                String?
+  location           String?
+  website            String?
+  timezone           String    @default("UTC")
+  
+  // Platform specific
+  apiKey             String    @unique
+  role               String    @default("other") // engineering, coding, arts, literature, other
+  tags               String[]  // Array of strings (e.g., 'verified', 'blacklisted')
+  status             String    @default("active") // active, banned
+  banReason          String?
+  bannedAt           DateTime?
+  
+  // Internal
+  isAdmin            Boolean   @default(false)
+  profileCompleted   Boolean   @default(false)
+  lastLogin          DateTime?
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+  
+  @@map("users")
+}

@@ -2,7 +2,7 @@
 
 **DEauth** is a modern authentication and user management system designed for seamless integration with Discord OAuth2. It provides a robust backend for managing user profiles, admin-only features, and API access for external services.
 
-## Features
+## 🚀 Features
 
 -   **Discord OAuth2**: Secure login via Discord with automatic profile updates.
 -   **User Profiles**: Customizable user data (full name, bio, website, role, etc.).
@@ -11,27 +11,27 @@
 -   **Flash Messages**: Real-time feedback for user actions (success, error, info).
 -   **Responsive UI**: Modern views built with EJS and customizable CSS.
 
-## Tech Stack
+## 🛠️ Tech Stack
 
 -   **Runtime**: [Node.js](https://nodejs.org/)
 -   **Framework**: [Express](https://expressjs.com/)
--   **Database**: [MongoDB](https://www.mongodb.com/) (using [Mongoose](https://mongoosejs.com/))
--   **Authentication**: [Passport.js](https://www.passportjs.org/) (Discord Strategy)
--   **View Engine**: [EJS](https://ejs.co/)
--   **Session Management**: Express-session with MongoDB store.
+-   **Database**: [PostgreSQL](https://www.postgresql.org/) (using [Prisma ORM](https://www.prisma.io/))
+-   **Authentication**: [Passport.js](https://www.passportjs.org/) with Discord Strategy
+-   **Session Storage**: [connect-pg-simple](https://www.npmjs.com/package/connect-pg-simple) (sessions stored in PostgreSQL)
+-   **Styling**: [Tailwind CSS](https://tailwindcss.com/) (via CDN)
 
-## Prerequisites
+## 📋 Prerequisites
 
 -   **Node.js**: v18.x or higher recommended.
--   **MongoDB**: v6.x or higher (local or cloud instance like MongoDB Atlas).
+-   **PostgreSQL**: v14.x or higher (local or cloud instance).
 -   **Discord Developer Account**: To create an application and obtain OAuth2 credentials.
 
-## Installation
+## ⚙️ Installation
 
 1.  **Clone the Repository**:
     ```bash
-    git clone https://github.com/your-repo/DEauth-auth.git
-    cd DEauth-auth
+    git clone https://github.com/your-repo/deauth.git
+    cd deauth
     ```
 
 2.  **Install Dependencies**:
@@ -39,10 +39,10 @@
     npm install
     ```
 
-##  Configuration
+## 🔧 Configuration
 
 1.  **Set Up Environment Variables**:
-    Create a `.env` file in the root directory by copying the example:
+    Create a `.env` file in the root directory:
     ```bash
     cp .env.example .env
     ```
@@ -50,54 +50,51 @@
 2.  **Fill in the Configuration**:
     Edit your `.env` file with the following keys:
     - `SESSION_SECRET`: A long, random string to secure sessions.
-    - `MONGODB_URI`: Your MongoDB connection string (e.g., `mongodb://localhost:27017/DEauth`).
-    - `DISCORD_CLIENT_ID`: Obtained from the Discord Developer Portal.
+    - `DATABASE_URL`: `postgresql://postgres:postgres@localhost:5433/deauth?schema=public` (Note the port **5433** if using Docker).
+    - `DISCORD_CLIENT_ID`: Obtained from the [Discord Developer Portal](https://discord.com/developers/applications).
     - `DISCORD_CLIENT_SECRET`: Obtained from the Discord Developer Portal.
-    - `DISCORD_CALLBACK_URL`: Typically `http://localhost:3000/auth/discord/callback` for local development.
+    - `DISCORD_CALLBACK_URL`: Typically `http://localhost:3000/auth/discord/callback`.
     - `ADMIN_DISCORD_IDS`: Comma-separated list of Discord User IDs for admin access.
 
-## Discord OAuth2 Setup
+## 🐳 Database Setup (Docker)
 
-1.  Navigate to the [Discord Developer Portal](https://discord.com/developers/applications).
-2.  Create a **New Application**.
-3.  Go to the **OAuth2** tab → **Redirects**.
-4.  Add your redirect URI (e.g., `http://localhost:3000/auth/discord/callback`).
-5.  Copy the **Client ID** and **Client Secret** into your `.env` file.
+The project includes a PostgreSQL 15 instance pre-configured via Docker Compose.
 
-## 🐳 Quick Start with Docker (Recommended)
-
-The easiest way to get the project running with all its dependencies (including MongoDB) is via Docker Compose.
-
-1.  **Start Services**:
+1.  **Start PostgreSQL**:
     ```bash
-    npm run docker:up
+    sudo docker compose up -d postgres
     ```
-    This will build the application image and start both the Node.js server and a MongoDB instance in the background.
+    *Note: The database is mapped to host port **5433** to avoid conflicts with local PostgreSQL instances.*
 
-2.  **Stop Services**:
+2.  **Initialize Database Schema**:
+    Once the database is running, apply the Prisma migrations:
     ```bash
-    npm run docker:down
+    npx prisma migrate dev --name init
+    ```
+
+3.  **Generate Prisma Client**:
+    ```bash
+    npx prisma generate
     ```
 
 ## 🏃 Running the Application
 
-### Option 1: Using Docker (easiest)
-```bash
-npm run docker:up
-```
+1. **Local Development**:
+   ```bash
+   npm run dev
+   ```
+   *The server will start on `http://localhost:3000`.*
 
-### Option 2: Local Development
-- **Start MongoDB**: Ensure your local MongoDB service is running.
-- **Development Mode** (with automatic restart):
-  ```bash
-  npm run dev
-  ```
-- **Production Mode**:
-  ```bash
-  npm start
-  ```
+2. **Docker Deployment (Full App)**:
+   ```bash
+   npm run docker:up
+   ```
 
-The server will be accessible at `http://localhost:3000` (or your defined `PORT`).
+---
+
+## 🛡️ Admin Access
+
+To designate a user as an administrator, add their numeric Discord User ID to the `ADMIN_DISCORD_IDS` variable in your `.env` file. The system automatically grants privileges upon login.
 
 ---
 

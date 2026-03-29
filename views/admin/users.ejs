@@ -11,8 +11,8 @@
     <aside class="w-64 bg-dark-900/50 border-r border-dark-800 flex flex-col fixed h-full z-20">
       <div class="p-6 border-b border-dark-800">
         <a href="/admin" class="flex items-center gap-3">
-          <img src="/tree.png" alt="Tree" class="w-9 h-9 object-contain">
-          <div><span class="text-lg font-bold bg-gradient-to-r from-amber-400 to-amber-300 bg-clip-text text-transparent">Tree</span><span class="text-xs text-dark-500 block -mt-1">Admin Panel</span></div>
+          <img src="/deauth.png" alt="DEauth" class="w-9 h-9 object-contain">
+          <div><span class="text-lg font-bold bg-gradient-to-r from-amber-400 to-amber-300 bg-clip-text text-transparent">DEauth</span><span class="text-xs text-dark-500 block -mt-1">Admin Panel</span></div>
         </a>
       </div>
       <nav class="flex-1 p-4 space-y-1">
@@ -36,7 +36,7 @@
     <main class="flex-1 ml-64 p-8">
       <!-- Flash -->
       <% if (success && success.length > 0) { %>
-        <div class="mb-6 px-4 py-3 bg-tree-500/10 border border-tree-500/20 rounded-xl text-tree-400 text-sm"><%= success %></div>
+        <div class="mb-6 px-4 py-3 bg-deauth-500/10 border border-deauth-500/20 rounded-xl text-deauth-400 text-sm"><%= success %></div>
       <% } %>
 
       <div class="mb-6">
@@ -116,8 +116,8 @@
                       <span class="w-1.5 h-1.5 rounded-full bg-red-400"></span> Banned
                     </span>
                   <% } else { %>
-                    <span class="inline-flex items-center gap-1 px-2 py-0.5 bg-tree-500/10 text-tree-400 rounded-full text-xs font-medium">
-                      <span class="w-1.5 h-1.5 rounded-full bg-tree-400"></span> Active
+                    <span class="inline-flex items-center gap-1 px-2 py-0.5 bg-deauth-500/10 text-deauth-400 rounded-full text-xs font-medium">
+                      <span class="w-1.5 h-1.5 rounded-full bg-deauth-400"></span> Active
                     </span>
                   <% } %>
                 </td>
@@ -150,7 +150,7 @@
                   <span class="text-xs text-dark-500"><%= new Date(u.createdAt).toLocaleDateString() %></span>
                 </td>
                 <td class="px-6 py-4 text-right">
-                  <a href="/admin/users/<%= u._id %>" class="px-3 py-1.5 bg-dark-800 hover:bg-dark-700 border border-dark-700 rounded-lg text-xs text-dark-300 transition-colors">
+                  <a href="/admin/users/<%= u.id %>" class="px-3 py-1.5 bg-dark-800 hover:bg-dark-700 border border-dark-700 rounded-lg text-xs text-dark-300 transition-colors">
                     View
                   </a>
                 </td>

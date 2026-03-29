@@ -1,4 +1,5 @@
 // ─── Authentication & Authorization Middleware ───
+const { prisma, UserUtils } = require('../models/User');
 
 // Check if user is logged in
 exports.isAuthenticated = (req, res, next) => {
@@ -69,8 +70,7 @@ exports.apiKeyAuth = async (req, res, next) => {
   }
 
   try {
-    const User = require('../models/User');
-    const user = await User.findOne({ apiKey });
+    const user = await prisma.user.findFirst({ where: { apiKey } });
 
     if (!user) {
       return res.status(401).json({ success: false, error: 'Invalid API key.' });
@@ -94,8 +94,7 @@ exports.adminApiAuth = async (req, res, next) => {
   }
 
   try {
-    const User = require('../models/User');
-    const user = await User.findOne({ apiKey });
+    const user = await prisma.user.findFirst({ where: { apiKey } });
 
     if (!user || !user.isAdmin) {
       return res.status(403).json({ success: false, error: 'Admin access required.' });

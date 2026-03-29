@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const User = require('../models/User');
+const { prisma, UserUtils } = require('../models/User');
 const { apiKeyAuth, adminApiAuth } = require('../middleware/auth');
 
 // ─── Verify current user (for Wakatime etc.) ───
@@ -8,7 +8,7 @@ router.get('/me', apiKeyAuth, (req, res) => {
   const user = req.apiUser;
   res.json({
     success: true,
-    user: user.toServiceJSON()
+    user: UserUtils.toServiceJSON(user)
   });
 });
 
@@ -18,14 +18,14 @@ router.get('/access-check', apiKeyAuth, (req, res) => {
   const user = req.apiUser;
   res.json({
     success: true,
-    userId: user._id,
+    userId: user.id,
     username: user.username,
-    canAccess: user.canAccessServices(),
+    canAccess: UserUtils.canAccessServices(user),
     status: user.status,
-    isBanned: user.isBanned(),
-    isBlacklisted: user.isBlacklisted(),
-    isVerified: user.hasTag('verified'),
-    isWhitelisted: user.hasTag('whitelisted'),
+    isBanned: UserUtils.isBanned(user),
+    isBlacklisted: UserUtils.isBlacklisted(user),
+    isVerified: UserUtils.hasTag(user, 'verified'),
+    isWhitelisted: UserUtils.hasTag(user, 'whitelisted'),
     role: user.role,
     tags: user.tags
   });
@@ -35,13 +35,13 @@ router.get('/access-check', apiKeyAuth, (req, res) => {
 // GET /api/users/:id
 router.get('/users/:id', adminApiAuth, async (req, res) => {
   try {
-    const user = await User.findById(req.params.id);
+    const user = await prisma.user.findUnique({ where: { id: req.params.id } });
     if (!user) {
       return res.status(404).json({ success: false, error: 'User not found.' });
     }
     res.json({
       success: true,
-      user: user.toServiceJSON()
+      user: UserUtils.toServiceJSON(user)
     });
   } catch (err) {
     res.status(500).json({ success: false, error: 'Server error.' });
@@ -53,27 +53,29 @@ router.get('/users/:id', adminApiAuth, async (req, res) => {
 router.get('/users', adminApiAuth, async (req, res) => {
   try {
     const { search, status, role, tag, limit } = req.query;
-    let query = {};
+    let where = {};
 
     if (search) {
-      query.$or = [
-        { username: { $regex: search, $options: 'i' } },
-        { fullName: { $regex: search, $options: 'i' } },
-        { email: { $regex: search, $options: 'i' } }
+      where.OR = [
+        { username: { contains: search, mode: 'insensitive' } },
+        { fullName: { contains: search, mode: 'insensitive' } },
+        { email: { contains: search, mode: 'insensitive' } }
       ];
     }
-    if (status) query.status = status;
-    if (role) query.role = role;
-    if (tag) query.tags = tag;
+    if (status) where.status = status;
+    if (role) where.role = role;
+    if (tag) where.tags = { has: tag };
 
-    const users = await User.find(query)
-      .sort({ createdAt: -1 })
-      .limit(parseInt(limit) || 50);
+    const users = await prisma.user.findMany({
+      where,
+      orderBy: { createdAt: 'desc' },
+      take: parseInt(limit) || 50
+    });
 
     res.json({
       success: true,
       count: users.length,
-      users: users.map(u => u.toServiceJSON())
+      users: users.map(u => UserUtils.toServiceJSON(u))
     });
   } catch (err) {
     res.status(500).json({ success: false, error: 'Server error.' });
@@ -84,20 +86,20 @@ router.get('/users', adminApiAuth, async (req, res) => {
 // GET /api/verify/:username
 router.get('/verify/:username', async (req, res) => {
   try {
-    const user = await User.findOne({ username: req.params.username.toLowerCase() });
+    const user = await prisma.user.findUnique({ where: { username: req.params.username.toLowerCase() } });
     if (!user) {
       return res.status(404).json({ success: false, error: 'User not found.' });
     }
     res.json({
       success: true,
       user: {
-        id: user._id,
+        id: user.id,
         username: user.username,
         status: user.status,
-        canAccess: user.canAccessServices(),
+        canAccess: UserUtils.canAccessServices(user),
         tags: user.tags,
         role: user.role,
-        avatar: user.getAvatarURL()
+        avatar: UserUtils.getAvatarURL(user)
       }
     });
   } catch (err) {
@@ -109,7 +111,7 @@ router.get('/verify/:username', async (req, res) => {
 router.get('/health', (req, res) => {
   res.json({
     success: true,
-    service: 'Tree Auth',
+    service: 'DEauth',
     version: '1.0.0',
     timestamp: new Date().toISOString()
   });

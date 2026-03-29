@@ -11,8 +11,8 @@
     <aside class="w-64 bg-dark-900/50 border-r border-dark-800 flex flex-col fixed h-full z-20">
       <div class="p-6 border-b border-dark-800">
         <a href="/dashboard" class="flex items-center gap-3">
-          <img src="/tree.png" alt="Tree" class="w-9 h-9 object-contain">
-          <span class="text-lg font-bold bg-gradient-to-r from-tree-400 to-tree-300 bg-clip-text text-transparent">Tree</span>
+          <img src="/deauth.png" alt="DEauth" class="w-9 h-9 object-contain">
+          <span class="text-lg font-bold bg-gradient-to-r from-deauth-400 to-deauth-300 bg-clip-text text-transparent">DEauth</span>
         </a>
       </div>
       <nav class="flex-1 p-4 space-y-1">
@@ -20,7 +20,7 @@
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z"/></svg>
           Overview
         </a>
-        <a href="/dashboard/edit" class="flex items-center gap-3 px-4 py-2.5 rounded-xl bg-tree-500/10 text-tree-400 transition-colors">
+        <a href="/dashboard/edit" class="flex items-center gap-3 px-4 py-2.5 rounded-xl bg-deauth-500/10 text-deauth-400 transition-colors">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"/></svg>
           Edit Profile
         </a>
@@ -45,7 +45,7 @@
     <main class="flex-1 ml-64 p-8">
       <!-- Flash -->
       <% if (success && success.length > 0) { %>
-        <div class="mb-6 px-4 py-3 bg-tree-500/10 border border-tree-500/20 rounded-xl text-tree-400 text-sm"><%= success %></div>
+        <div class="mb-6 px-4 py-3 bg-deauth-500/10 border border-deauth-500/20 rounded-xl text-deauth-400 text-sm"><%= success %></div>
       <% } %>
       <% if (error && error.length > 0) { %>
         <div class="mb-6 px-4 py-3 bg-red-500/10 border border-red-500/20 rounded-xl text-red-400 text-sm"><%= error %></div>
@@ -53,7 +53,7 @@
 
       <div class="mb-8">
         <h1 class="text-2xl font-bold text-dark-100">Edit Profile</h1>
-        <p class="text-dark-500 mt-1">Update your Tree identity. Password required to confirm changes.</p>
+        <p class="text-dark-500 mt-1">Update your DEauth identity. Password required to confirm changes.</p>
       </div>
 
       <form action="/dashboard/edit" method="POST" class="glass rounded-2xl p-8 max-w-3xl">
@@ -62,30 +62,30 @@
           <div>
             <label class="block text-sm font-medium text-dark-300 mb-2">Username</label>
             <input type="text" name="newUsername" value="<%= user.username %>" minlength="3" maxlength="30"
-                   class="w-full px-4 py-3 bg-dark-900/80 border border-dark-700 rounded-xl text-dark-100 focus:outline-none focus:border-tree-500 focus:ring-1 focus:ring-tree-500 transition-colors">
+                   class="w-full px-4 py-3 bg-dark-900/80 border border-dark-700 rounded-xl text-dark-100 focus:outline-none focus:border-deauth-500 focus:ring-1 focus:ring-deauth-500 transition-colors">
           </div>
 
           <div>
             <label class="block text-sm font-medium text-dark-300 mb-2">Email</label>
             <input type="email" name="newEmail" value="<%= user.email %>"
-                   class="w-full px-4 py-3 bg-dark-900/80 border border-dark-700 rounded-xl text-dark-100 focus:outline-none focus:border-tree-500 focus:ring-1 focus:ring-tree-500 transition-colors">
+                   class="w-full px-4 py-3 bg-dark-900/80 border border-dark-700 rounded-xl text-dark-100 focus:outline-none focus:border-deauth-500 focus:ring-1 focus:ring-deauth-500 transition-colors">
           </div>
 
           <div class="md:col-span-2">
             <label class="block text-sm font-medium text-dark-300 mb-2">Full Name</label>
             <input type="text" name="fullName" value="<%= user.fullName %>" maxlength="100"
-                   class="w-full px-4 py-3 bg-dark-900/80 border border-dark-700 rounded-xl text-dark-100 focus:outline-none focus:border-tree-500 focus:ring-1 focus:ring-tree-500 transition-colors">
+                   class="w-full px-4 py-3 bg-dark-900/80 border border-dark-700 rounded-xl text-dark-100 focus:outline-none focus:border-deauth-500 focus:ring-1 focus:ring-deauth-500 transition-colors">
           </div>
 
           <div class="md:col-span-2">
             <label class="block text-sm font-medium text-dark-300 mb-2">Bio</label>
             <textarea name="bio" rows="3" maxlength="500"
-                      class="w-full px-4 py-3 bg-dark-900/80 border border-dark-700 rounded-xl text-dark-100 focus:outline-none focus:border-tree-500 focus:ring-1 focus:ring-tree-500 transition-colors resize-none"><%= user.bio || '' %></textarea>
+                      class="w-full px-4 py-3 bg-dark-900/80 border border-dark-700 rounded-xl text-dark-100 focus:outline-none focus:border-deauth-500 focus:ring-1 focus:ring-deauth-500 transition-colors resize-none"><%= user.bio || '' %></textarea>
           </div>
 
           <div>
             <label class="block text-sm font-medium text-dark-300 mb-2">Role</label>
-            <select name="role" class="w-full px-4 py-3 bg-dark-900/80 border border-dark-700 rounded-xl text-dark-100 focus:outline-none focus:border-tree-500 focus:ring-1 focus:ring-tree-500 transition-colors">
+            <select name="role" class="w-full px-4 py-3 bg-dark-900/80 border border-dark-700 rounded-xl text-dark-100 focus:outline-none focus:border-deauth-500 focus:ring-1 focus:ring-deauth-500 transition-colors">
               <option value="engineering" <%= user.role === 'engineering' ? 'selected' : '' %>>Engineering</option>
               <option value="coding" <%= user.role === 'coding' ? 'selected' : '' %>>Coding</option>
               <option value="arts" <%= user.role === 'arts' ? 'selected' : '' %>>Arts</option>
@@ -97,18 +97,18 @@
           <div>
             <label class="block text-sm font-medium text-dark-300 mb-2">Location</label>
             <input type="text" name="location" value="<%= user.location || '' %>"
-                   class="w-full px-4 py-3 bg-dark-900/80 border border-dark-700 rounded-xl text-dark-100 focus:outline-none focus:border-tree-500 focus:ring-1 focus:ring-tree-500 transition-colors">
+                   class="w-full px-4 py-3 bg-dark-900/80 border border-dark-700 rounded-xl text-dark-100 focus:outline-none focus:border-deauth-500 focus:ring-1 focus:ring-deauth-500 transition-colors">
           </div>
 
           <div>
             <label class="block text-sm font-medium text-dark-300 mb-2">Website</label>
             <input type="url" name="website" value="<%= user.website || '' %>"
-                   class="w-full px-4 py-3 bg-dark-900/80 border border-dark-700 rounded-xl text-dark-100 focus:outline-none focus:border-tree-500 focus:ring-1 focus:ring-tree-500 transition-colors">
+                   class="w-full px-4 py-3 bg-dark-900/80 border border-dark-700 rounded-xl text-dark-100 focus:outline-none focus:border-deauth-500 focus:ring-1 focus:ring-deauth-500 transition-colors">
           </div>
 
           <div>
             <label class="block text-sm font-medium text-dark-300 mb-2">Timezone</label>
-            <select name="timezone" class="w-full px-4 py-3 bg-dark-900/80 border border-dark-700 rounded-xl text-dark-100 focus:outline-none focus:border-tree-500 focus:ring-1 focus:ring-tree-500 transition-colors">
+            <select name="timezone" class="w-full px-4 py-3 bg-dark-900/80 border border-dark-700 rounded-xl text-dark-100 focus:outline-none focus:border-deauth-500 focus:ring-1 focus:ring-deauth-500 transition-colors">
               <% const timezones = ['UTC','America/New_York','America/Chicago','America/Denver','America/Los_Angeles','Europe/London','Europe/Paris','Asia/Kolkata','Asia/Tokyo','Asia/Shanghai','Australia/Sydney']; %>
               <% timezones.forEach(tz => { %>
                 <option value="<%= tz %>" <%= user.timezone === tz ? 'selected' : '' %>><%= tz %></option>
@@ -128,7 +128,7 @@
           </div>
         </div>
 
-        <button type="submit" class="mt-8 w-full py-4 bg-gradient-to-r from-tree-500 to-tree-600 hover:from-tree-600 hover:to-tree-700 text-white font-semibold rounded-xl transition-all duration-300 hover:shadow-lg hover:shadow-tree-500/25">
+        <button type="submit" class="mt-8 w-full py-4 bg-gradient-to-r from-deauth-500 to-deauth-600 hover:from-deauth-600 hover:to-deauth-700 text-white font-semibold rounded-xl transition-all duration-300 hover:shadow-lg hover:shadow-deauth-500/25">
           Save Changes
         </button>
       </form>

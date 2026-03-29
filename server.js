@@ -2,14 +2,19 @@ require('dotenv').config();
 
 const express = require('express');
 const session = require('express-session');
-const MongoStore = require('connect-mongo');
+const pgSession = require('connect-pg-simple')(session);
+const { Pool } = require('pg');
 const passport = require('passport');
 const DiscordStrategy = require('passport-discord').Strategy;
 const flash = require('connect-flash');
 const path = require('path');
 
 const connectDB = require('./config/database');
-const User = require('./models/User');
+const { prisma, UserUtils } = require('./models/User');
+
+const pgPool = new Pool({
+  connectionString: process.env.DATABASE_URL
+});
 
 const app = express();
 
@@ -29,14 +34,14 @@ app.use(express.urlencoded({ extended: true }));
 
 // ─── Session ───
 app.use(session({
+  store: new pgSession({
+    pool: pgPool,
+    tableName: 'sessions', // Must exist in DB
+    createTableIfMissing: true
+  }),
   secret: process.env.SESSION_SECRET,
   resave: false,
   saveUninitialized: false,
-  store: MongoStore.create({
-    mongoUrl: process.env.MONGODB_URI,
-    collectionName: 'sessions',
-    ttl: 7 * 24 * 60 * 60 // 7 days
-  }),
   cookie: {
     maxAge: 7 * 24 * 60 * 60 * 1000,
     httpOnly: true,
@@ -62,38 +67,39 @@ passport.use(new DiscordStrategy({
   scope: ['identify', 'email']
 }, async (accessToken, refreshToken, profile, done) => {
   try {
-    let user = await User.findOne({ discordId: profile.id });
+    let user = await prisma.user.findUnique({ where: { discordId: profile.id } });
 
     if (user) {
       // Update discord info on each login
-      user.discordUsername = profile.username;
-      user.discordGlobalName = profile.global_name || profile.username;
-      user.discordAvatar = profile.avatar;
-      user.discordEmail = profile.email;
-      user.lastLogin = Date.now();
-
-      // Check if user should be admin
-      if (adminIds.includes(profile.id) && !user.isAdmin) {
-        user.isAdmin = true;
-      }
-
-      await user.save();
+      user = await prisma.user.update({
+        where: { id: user.id },
+        data: {
+          discordUsername: profile.username,
+          discordGlobalName: profile.global_name || profile.username,
+          discordAvatar: profile.avatar,
+          discordEmail: profile.email,
+          lastLogin: new Date(),
+          isAdmin: adminIds.includes(profile.id) ? true : user.isAdmin
+        }
+      });
       return done(null, user);
     }
 
     // Create new user
-    const newUser = new User({
-      discordId: profile.id,
-      discordUsername: profile.username,
-      discordGlobalName: profile.global_name || profile.username,
-      discordAvatar: profile.avatar,
-      discordEmail: profile.email,
-      isAdmin: adminIds.includes(profile.id),
-      lastLogin: Date.now()
+    const newUser = await prisma.user.create({
+      data: {
+        discordId: profile.id,
+        discordUsername: profile.username,
+        discordGlobalName: profile.global_name || profile.username,
+        discordAvatar: profile.avatar,
+        discordEmail: profile.email,
+        isAdmin: adminIds.includes(profile.id),
+        lastLogin: new Date(),
+        apiKey: UserUtils.generateApiKey(),
+        username: `user_${profile.id.substring(0, 8)}` // Temp username, user fills form later
+      }
     });
 
-    newUser.generateApiKey();
-    await newUser.save();
     return done(null, newUser);
   } catch (err) {
     return done(err);
@@ -103,7 +109,10 @@ passport.use(new DiscordStrategy({
 passport.serializeUser((user, done) => done(null, user.id));
 passport.deserializeUser(async (id, done) => {
   try {
-    const user = await User.findById(id);
+    let user = await prisma.user.findUnique({ where: { id: id } });
+    if (user) {
+      user = UserUtils.attachMethods(user);
+    }
     done(null, user);
   } catch (err) {
     done(err);
@@ -170,7 +179,7 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log('');
   console.log('  ████████████████████');
-  console.log('  │  DEauth Server │');
+  console.log('  │  DEauth Server   │');
   console.log('  ████████████████████');
   console.log(`  ✓ Server running on port ${PORT}`);
   console.log(`  ✓ Environment: ${process.env.NODE_ENV || 'development'}`);

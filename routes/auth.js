@@ -1,6 +1,6 @@
 const router = require('express').Router();
 const passport = require('passport');
-const User = require('../models/User');
+const { prisma, UserUtils } = require('../models/User');
 const { isAuthenticated } = require('../middleware/auth');
 
 // ─── Discord OAuth2 Login ───
@@ -56,18 +56,22 @@ router.post('/complete-profile', isAuthenticated, async (req, res) => {
     }
 
     // Check unique username
-    const existingUsername = await User.findOne({
-      username: username.toLowerCase(),
-      _id: { $ne: req.user._id }
+    const existingUsername = await prisma.user.findFirst({
+      where: {
+        username: username.toLowerCase(),
+        id: { not: req.user.id }
+      }
     });
     if (existingUsername) {
       errors.push('Username is already taken.');
     }
 
     // Check unique email
-    const existingEmail = await User.findOne({
-      email: email.toLowerCase(),
-      _id: { $ne: req.user._id }
+    const existingEmail = await prisma.user.findFirst({
+      where: {
+        email: email.toLowerCase(),
+        id: { not: req.user.id }
+      }
     });
     if (existingEmail) {
       errors.push('Email is already in use.');
@@ -79,25 +83,29 @@ router.post('/complete-profile', isAuthenticated, async (req, res) => {
     }
 
     // Update user
-    const user = await User.findById(req.user._id);
-    user.username = username.toLowerCase();
-    user.email = email.toLowerCase();
-    user.password = password; // will be hashed by pre-save hook
-    user.fullName = fullName.trim();
-    user.bio = bio ? bio.trim() : '';
-    user.website = website ? website.trim() : '';
-    user.location = location ? location.trim() : '';
-    user.role = role || 'other';
-    user.timezone = timezone || 'UTC';
-    user.profileCompleted = true;
+    const updateData = {
+      username: username.toLowerCase(),
+      email: email.toLowerCase(),
+      password: await UserUtils.hashPassword(password),
+      fullName: fullName.trim(),
+      bio: bio ? bio.trim() : '',
+      website: website ? website.trim() : '',
+      location: location ? location.trim() : '',
+      role: role || 'other',
+      timezone: timezone || 'UTC',
+      profileCompleted: true
+    };
 
-    if (!user.apiKey) {
-      user.generateApiKey();
+    if (!req.user.apiKey) {
+      updateData.apiKey = UserUtils.generateApiKey();
     }
 
-    await user.save();
+    await prisma.user.update({
+      where: { id: req.user.id },
+      data: updateData
+    });
 
-    req.flash('success', 'Welcome to Tree! Your profile is complete.');
+    req.flash('success', 'Welcome to DEauth! Your profile is complete.');
     res.redirect('/dashboard');
   } catch (err) {
     console.error('Profile completion error:', err);
