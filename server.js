@@ -170,7 +170,7 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log('');
   console.log('  ████████████████████');
-  console.log('  │ Tree Auth Server │');
+  console.log('  │  DEauth Server │');
   console.log('  ████████████████████');
   console.log(`  ✓ Server running on port ${PORT}`);
   console.log(`  ✓ Environment: ${process.env.NODE_ENV || 'development'}`);
